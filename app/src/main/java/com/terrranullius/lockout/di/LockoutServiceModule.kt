@@ -45,7 +45,7 @@ object LockoutServiceModule {
 
     private fun addContentIntent(context: Context) = PendingIntent.getActivity(
         context, 456,
-        Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT
+        Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
 
@@ -54,14 +54,14 @@ object LockoutServiceModule {
             Intent(context, MainActivity::class.java).apply {
                 action = ACTION_LOCKNOW
             }
-            , PendingIntent.FLAG_CANCEL_CURRENT)
+            , PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
     private fun addCancelPendingIntent(context: Context) =
         PendingIntent.getActivity(
             context, RC_CANCEL_LOCKOUT_PENDING_INTENT,
             Intent(context, MainActivity::class.java).apply {
                 action = ACTION_CANCEL_LOCKOUT
-            }, PendingIntent.FLAG_CANCEL_CURRENT
+            }, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
     @Provides

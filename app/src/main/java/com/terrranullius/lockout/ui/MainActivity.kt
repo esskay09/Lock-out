@@ -1,32 +1,34 @@
 package com.terrranullius.lockout.ui
 
+import android.Manifest
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.terrranullius.lockout.R
 import com.terrranullius.lockout.other.Constants
 import com.terrranullius.lockout.receivers.AdminAccessReceiver
 import com.terrranullius.lockout.services.MainService
 import com.terrranullius.lockout.ui.main.MainFragment
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var adminName: ComponentName
     private lateinit var devicePolicyManager: DevicePolicyManager
+    private val permissionRequester =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, MainFragment())
-                .commitNow()}
-
+        checkNotificationPermission()
     }
 
     override fun onResume() {
@@ -62,5 +64,17 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    private fun checkNotificationPermission() {
+        val isSDK33OrHigher = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+        if (!isSDK33OrHigher) return
+
+        val hasPermission =
+            checkCallingOrSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+        if (hasPermission) return
+
+        // Request permission
+        permissionRequester.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
 }

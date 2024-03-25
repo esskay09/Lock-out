@@ -38,7 +38,7 @@ fun Context.sendNotification(
                 this,
                 101,
                 Intent(this, MainActivity::class.java),
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             ), true
         )
 
@@ -60,7 +60,7 @@ fun Context.sendNotificationCompleted(contentTitle: String) {
         .setContentIntent(
             PendingIntent.getActivity(
                 this, 458,
-                Intent(this, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT
+                Intent(this, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         )
         .setVibrate(longArrayOf(50, 50, 100, 50, 100))

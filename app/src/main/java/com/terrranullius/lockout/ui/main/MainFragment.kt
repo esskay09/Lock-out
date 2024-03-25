@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -14,10 +13,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.terrranullius.lockout.R
 import com.terrranullius.lockout.other.Constants.ACTION_FRAGMENT_STARTED
@@ -27,9 +26,14 @@ import com.terrranullius.lockout.other.Constants.ACTION_STOP_SERVICE
 import com.terrranullius.lockout.other.Constants.EXTRA_LOCK_OUT_SECONDS
 import com.terrranullius.lockout.other.EventObserver
 import com.terrranullius.lockout.services.MainService
+import com.terrranullius.lockout.ui.util.PopupItem
+import com.terrranullius.lockout.ui.util.showPopup
 import com.terrranullius.lockout.util.FinishStatus
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
 
+
+@AndroidEntryPoint
 class MainFragment : Fragment(R.layout.main_fragment) {
 
     private lateinit var timerDialogLayout: View
@@ -48,7 +52,6 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         setUpDialogs()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -153,7 +156,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         )
 
         finishDialog = MaterialAlertDialogBuilder(requireContext()).setView(finishDialogLayout)
-            .setPositiveButton("Okay"){ _: DialogInterface, _: Int ->
+            .setPositiveButton("Okay") { _: DialogInterface, _: Int ->
 
             }
             .create()
@@ -166,22 +169,24 @@ class MainFragment : Fragment(R.layout.main_fragment) {
                 ACTION_START_SERVICE, minutesString
             )
         }
+        view.findViewById<ImageView>(R.id.ivMore).setOnClickListener {
+            it.showPopup(
+                listOf(PopupItem("Privacy Policy") {
+                    findNavController().navigate(R.id.action_mainFragment_to_privacyPolicyFragment)
+                })
+            )
+        }
         lockImageView = view.findViewById(R.id.iv_lock_main)
     }
 
-    private fun vibrate(duration: Long = 2000L){
+    private fun vibrate(duration: Long = 2000L) {
 
-        if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.O) {
-            vibrator.vibrate(
-                VibrationEffect.createOneShot(
-                    duration,
-                    VibrationEffect.DEFAULT_AMPLITUDE
-                )
+        vibrator.vibrate(
+            VibrationEffect.createOneShot(
+                duration,
+                VibrationEffect.DEFAULT_AMPLITUDE
             )
-        }
-        else{
-            vibrator.vibrate(2000L)
-        }
+        )
     }
 
 }

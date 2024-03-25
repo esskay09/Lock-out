@@ -18,4 +18,6 @@ object Constants {
     const val ACTION_LOCKNOW = "lockout"
 
     const val ACTION_FRAGMENT_STARTED = "ress"
+
+    const val PRIVACY_POLICY_URL = "https://ultimatecreations-production.up.railway.app/lockout-privacy.html"
 }
